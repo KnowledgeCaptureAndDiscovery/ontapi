@@ -17,12 +17,6 @@
 
 package edu.isi.wings.ontapi.tests;
 
-import edu.isi.wings.ontapi.KBAPI;
-import edu.isi.wings.ontapi.KBObject;
-import edu.isi.wings.ontapi.OntFactory;
-import edu.isi.wings.ontapi.OntSpec;
-//import org.mindswap.pellet.jena.PelletReasonerFactory;
-
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
@@ -33,6 +27,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.tdb.TDBFactory;
+
+import edu.isi.kcap.ontapi.KBAPI;
+import edu.isi.kcap.ontapi.KBObject;
+import edu.isi.kcap.ontapi.OntFactory;
+import edu.isi.kcap.ontapi.OntSpec;
 
 @SuppressWarnings("unused")
 public class KBTests {

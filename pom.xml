@@ -9,9 +9,9 @@
   <description>Ontology API for KCAP projects</description>
   <packaging>jar</packaging>
 
-  <groupId>edu.isi.wings</groupId>
+  <groupId>edu.isi.kcap</groupId>
   <artifactId>ontapi</artifactId>
-  <version>4.1</version>
+  <version>1.0-SNAPSHOT</version>
 
   <properties>
     <!-- pellet-jena.version>2.4.0-SNAPSHOT</pellet-jena.version-->
