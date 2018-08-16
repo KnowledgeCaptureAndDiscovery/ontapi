@@ -4,13 +4,13 @@ The Ontology API is a designed to provide a consistent interface to various KB r
 
 Maven configuration:
   ```
-	<repositories>
-		<!-- KCAP Repository -->
-		<repository>
+  <repositories>
+    <!-- KCAP Repository -->
+    <repository>
       <id>Local archiva.snapshots repository</id>
-			<url>http://www.wings-workflows.org/archiva/repository/snapshots/</url>
-		</repository>
-	</repositories>
+      <url>http://www.wings-workflows.org/archiva/repository/snapshots/</url>
+    </repository>
+  </repositories>
   
   <dependency>
     <groupId>edu.isi.kcap</groupId>
