@@ -13,6 +13,11 @@
   <artifactId>ontapi</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <organization>
+  	<name>USC/Information Sciences Institute</name>
+  	<url>http://www.isi.edu/ikcap</url>
+  </organization>
+  
   <properties>
     <!-- pellet-jena.version>2.4.0-SNAPSHOT</pellet-jena.version-->
     <jena.version>3.7.0</jena.version>
@@ -23,6 +28,8 @@
 	<commons-io.version>2.4</commons-io.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
   </properties>
 
   <distributionManagement>
