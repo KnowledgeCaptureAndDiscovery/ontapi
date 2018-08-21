@@ -18,13 +18,14 @@
 package edu.isi.kcap.ontapi;
 
 import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.TxnType;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
+import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
 
 import java.io.InputStream;
-
-import org.apache.log4j.Logger;
 
 import edu.isi.kcap.ontapi.jena.KBAPIJena;
 import edu.isi.kcap.ontapi.jena.KBObjectJena;
@@ -41,8 +42,11 @@ public class OntFactory {
 	public static int SESAME = 1;
 
 	int type;
-	String tripleStoreDirectory;
+	
+  static Dataset tdbstore;
 
+  boolean usetdb = false;
+  
 	// Type of Factory (default JENA used for now, can add more here)
 	public OntFactory(int type) {
 		this.type = type;
@@ -52,26 +56,38 @@ public class OntFactory {
 			FileManager.get().setModelCaching(false);
 
 			// Extra Rules
-			Power rule1 = new Power();
-			BuiltinRegistry.theRegistry.register(rule1);
-			Log rulelog = new Log();
-			BuiltinRegistry.theRegistry.register(rulelog);
-			AddDays rule2 = new AddDays();
-			BuiltinRegistry.theRegistry.register(rule2);
-			SubtractDays rule3 = new SubtractDays();
-			BuiltinRegistry.theRegistry.register(rule3);
+			BuiltinRegistry.theRegistry.register(new Power());
+			BuiltinRegistry.theRegistry.register(new Log());
+			BuiltinRegistry.theRegistry.register(new AddDays());
+			BuiltinRegistry.theRegistry.register(new SubtractDays());
 		}
 	}
 
 	public OntFactory(int type, String tripleStoreDirectory) {
 		this(type);
-		this.tripleStoreDirectory = tripleStoreDirectory;
+		this.usetdb = true;
+    if(tdbstore == null)
+      tdbstore = TDBFactory.createDataset(tripleStoreDirectory);   
+	}
+	
+	public void useTripleStore(KBAPI kb) {
+	  if(this.type == JENA && tdbstore != null) {
+	    KBAPIJena jkb = (KBAPIJena) kb;
+      jkb.tdbstore = tdbstore;
+	  }
 	}
 
+  public void noTripleStore(KBAPI kb) {
+    if(this.type == JENA) {
+      KBAPIJena jkb = (KBAPIJena) kb;    
+      jkb.tdbstore = null;
+    }
+  }
+  
 	public KBAPI getKB(String url, OntSpec spec) throws Exception {
 		if (this.type == JENA) {
-			if (this.tripleStoreDirectory != null)
-				return new KBAPIJena(url, tripleStoreDirectory, spec);
+			if (this.usetdb)
+				return new KBAPIJena(url, tdbstore, spec);
 			else
 				return new KBAPIJena(url, spec);
 		}
@@ -85,8 +101,8 @@ public class OntFactory {
 	public KBAPI getKB(String url, OntSpec spec, boolean create_if_empty, boolean cache_url) 
 			throws Exception {
 		if (this.type == JENA) {
-			if (this.tripleStoreDirectory != null)
-				return new KBAPIJena(url, tripleStoreDirectory, spec, cache_url);
+			if (this.usetdb)
+				return new KBAPIJena(url, tdbstore, spec, cache_url);
 			else
 				return new KBAPIJena(url, spec, create_if_empty, cache_url);
 		}
@@ -95,10 +111,7 @@ public class OntFactory {
 
 	public KBAPI getKB(InputStream data, String base, OntSpec spec) {
 		if (this.type == JENA) {
-			if (this.tripleStoreDirectory != null)
-				Logger.getLogger(this.getClass()).warn(
-						"InputStream data not allowed for triple store factories. "
-								+ "Reverting to non-triple store api");
+		  this.usetdb = false;
 			return new KBAPIJena(data, base, spec);
 		}
 		return null;
@@ -106,10 +119,7 @@ public class OntFactory {
 
 	public KBAPI getKB(OntSpec spec) {
 		if (this.type == JENA) {
-			KBAPIJena kb = new KBAPIJena(spec);
-			if(this.tripleStoreDirectory != null)
-				kb.setTdbStore(this.tripleStoreDirectory);
-			return kb;
+		  return new KBAPIJena(spec);
 		}
 		return null;
 	}
@@ -180,7 +190,43 @@ public class OntFactory {
 		return null;
 	}
 	
+	// Transactions
+  public boolean start_read_transaction() {
+    if(this.usetdb && !tdbstore.isInTransaction()) {
+      tdbstore.begin(TxnType.READ);
+    }
+    return true;
+  }
+  
+  public boolean start_write_transaction() {
+    if(this.usetdb && !tdbstore.isInTransaction()) {
+      tdbstore.begin(TxnType.WRITE);
+    }
+    return true;
+  }
+  
+  public boolean commit_transaction() {
+    if(this.usetdb && !tdbstore.isInTransaction()) {
+      tdbstore.commit();
+    }
+    return true;    
+  }
+  
+  public boolean end_transaction() {
+     if(this.usetdb && tdbstore.isInTransaction()) {
+       if(tdbstore.supportsTransactionAbort()) {
+         tdbstore.abort();
+       }
+       tdbstore.end();
+     }
+     return true;
+  }	
+  
 	public static void shutdown() {
-	  KBAPIJena.shutdown();
+	  if(tdbstore.isInTransaction())
+	    tdbstore.abort();
+	  tdbstore.end();
+	  tdbstore.close();
+	  TDBFactory.release(tdbstore);
 	}
 }

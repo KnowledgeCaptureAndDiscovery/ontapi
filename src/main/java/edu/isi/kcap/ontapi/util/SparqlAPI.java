@@ -28,6 +28,7 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
@@ -65,15 +66,21 @@ public class SparqlAPI {
       ResultsFormat fmt = ResultsFormat.lookup(format);
       
       Dataset tdbstore = TDBFactory.createDataset(this.tdbdir);
-      QueryExecution qexec = QueryExecutionFactory.create(query, tdbstore);
-      qexec.getContext().set(TDB.symUnionDefaultGraph, true);
-      ResultSet results = qexec.execSelect();
-      if(fmt == null) {
-        out.print(queryString+"\n");
-        ResultSetFormatter.out(out, results, query);
+      try {
+        tdbstore.begin(ReadWrite.READ);
+        QueryExecution qexec = QueryExecutionFactory.create(query, tdbstore);
+        qexec.getContext().set(TDB.symUnionDefaultGraph, true);
+        ResultSet results = qexec.execSelect();
+        if(fmt == null) {
+          out.print(queryString+"\n");
+          ResultSetFormatter.out(out, results, query);
+        }
+        else
+          ResultSetFormatter.output(out, results, fmt);
       }
-      else
-        ResultSetFormatter.output(out, results, fmt);
+      finally {
+        tdbstore.end();
+      }
     }
     else {
       out.print("Only select queries allowed");
@@ -83,10 +90,17 @@ public class SparqlAPI {
   public void executeUpdateQuery(String updateString, PrintStream out) 
       throws IOException {
     Dataset tdbstore = TDBFactory.createDataset(this.tdbdir);
-    UpdateRequest update = UpdateFactory.create(updateString);
-    UpdateAction.execute(update, tdbstore);
-    out.print("Updated");
-    TDB.sync(tdbstore);
+    try {
+      tdbstore.begin(ReadWrite.WRITE);
+      UpdateRequest update = UpdateFactory.create(updateString);
+      UpdateAction.execute(update, tdbstore);
+      out.print("Updated");
+      tdbstore.commit();
+      //TDB.sync(tdbstore);
+    }
+    finally {
+      tdbstore.end();
+    }
   }
   
   public void updateGraphURLs(String cururl, String newurl, PrintStream out) {
@@ -94,62 +108,71 @@ public class SparqlAPI {
     try {out.println(cururl +" ==>> "+newurl);}
     catch (Exception e) {System.out.println(cururl +" ==>> "+newurl);}
     
-    // Update all graphs in the Dataset
-    ArrayList<String> graphnames = new ArrayList<String>();
     try {
-      Query query = QueryFactory.create("SELECT DISTINCT ?g { GRAPH ?g { ?s ?p ?o }}");
-      QueryExecution qexec = QueryExecutionFactory.create(query, tdbstore);
-      qexec.getContext().set(TDB.symUnionDefaultGraph, true);
-      ResultSet results = qexec.execSelect();
-      while(results.hasNext()) {
-        QuerySolution soln = results.next();
-        RDFNode graph = soln.get("g");
-        if(graph.isURIResource())
-          graphnames.add(graph.asResource().getURI());
+      tdbstore.begin(ReadWrite.READ);
+      // Update all graphs in the Dataset
+      ArrayList<String> graphnames = new ArrayList<String>();
+      try {
+        Query query = QueryFactory.create("SELECT DISTINCT ?g { GRAPH ?g { ?s ?p ?o }}");
+        QueryExecution qexec = QueryExecutionFactory.create(query, tdbstore);
+        qexec.getContext().set(TDB.symUnionDefaultGraph, true);
+        ResultSet results = qexec.execSelect();
+        while(results.hasNext()) {
+          QuerySolution soln = results.next();
+          RDFNode graph = soln.get("g");
+          if(graph.isURIResource())
+            graphnames.add(graph.asResource().getURI());
+        }
       }
-    }
-    catch(Exception e) {
-      e.printStackTrace();
-    }
-    
-    for(String graphname : graphnames) {
-      if(graphname.startsWith(cururl)) {
-        String newname = graphname.replace(cururl, newurl);
-        try {out.println(graphname + " -> "+newname);}
-        catch (Exception e) {System.out.println(graphname + " -> "+newname);}
-        
-        try {
-          Model m = tdbstore.getNamedModel(graphname);
-          Model nm = ModelFactory.createDefaultModel();
+      catch(Exception e) {
+        e.printStackTrace();
+      }
+      tdbstore.end();
+      
+      tdbstore.begin(ReadWrite.WRITE);
+      for(String graphname : graphnames) {
+        if(graphname.startsWith(cururl)) {
+          String newname = graphname.replace(cururl, newurl);
+          try {out.println(graphname + " -> "+newname);}
+          catch (Exception e) {System.out.println(graphname + " -> "+newname);}
           
-          for(StmtIterator iter = m.listStatements(); iter.hasNext(); ) {
-            Statement st = iter.next();
-            Resource subj = st.getSubject();
-            Property pred = st.getPredicate();
-            RDFNode obj = st.getObject();
-            if(subj.isURIResource() && subj.getURI().startsWith(cururl)) {
-              String nurl = subj.getURI().replace(cururl, newurl);
-              subj = new ResourceImpl(nurl);
+          try {
+            Model m = tdbstore.getNamedModel(graphname);
+            Model nm = ModelFactory.createDefaultModel();
+            
+            for(StmtIterator iter = m.listStatements(); iter.hasNext(); ) {
+              Statement st = iter.next();
+              Resource subj = st.getSubject();
+              Property pred = st.getPredicate();
+              RDFNode obj = st.getObject();
+              if(subj.isURIResource() && subj.getURI().startsWith(cururl)) {
+                String nurl = subj.getURI().replace(cururl, newurl);
+                subj = new ResourceImpl(nurl);
+              }
+              if(pred.getURI().startsWith(cururl)) {
+                String nurl = pred.getURI().replace(cururl, newurl);
+                pred = new PropertyImpl(nurl);
+              }
+              if(obj.isURIResource() && obj.asResource().getURI().startsWith(cururl)) {
+                String nurl = obj.asResource().getURI().replace(cururl, newurl);
+                obj = new ResourceImpl(nurl);
+              }
+              nm.add(new StatementImpl(subj, pred, obj));
             }
-            if(pred.getURI().startsWith(cururl)) {
-              String nurl = pred.getURI().replace(cururl, newurl);
-              pred = new PropertyImpl(nurl);
-            }
-            if(obj.isURIResource() && obj.asResource().getURI().startsWith(cururl)) {
-              String nurl = obj.asResource().getURI().replace(cururl, newurl);
-              obj = new ResourceImpl(nurl);
-            }
-            nm.add(new StatementImpl(subj, pred, obj));
+            tdbstore.removeNamedModel(graphname);
+            tdbstore.addNamedModel(newname, nm);
           }
-          tdbstore.removeNamedModel(graphname);
-          tdbstore.addNamedModel(newname, nm);
-        }
-        catch (Exception e) {
-          e.printStackTrace();
+          catch (Exception e) {
+            e.printStackTrace();
+          }
         }
       }
+      tdbstore.commit();
     }
-    TDB.sync(tdbstore);
+    finally {
+      tdbstore.end();
+    }
+    //TDB.sync(tdbstore);
   }
 
 }

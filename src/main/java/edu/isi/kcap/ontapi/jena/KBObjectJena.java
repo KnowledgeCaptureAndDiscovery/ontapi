@@ -73,29 +73,23 @@ public class KBObjectJena implements KBObject {
 	}
 
 	public String shortForm(boolean showLiteralTypes) {
-	  KBAPIJena.readLock.lock();
-	  try {
-	    if (node != null && node.isResource()) {
-	      Resource resource = (Resource) node;
-	      Model model = resource.getModel();
-	      try {
-	        String name = model.shortForm(resource.getURI());
-	        if (name.startsWith(":"))
-	          name = name.substring(1);
-	        return name;
-	      } catch (Exception e) {
-	        return resource.toString();
-	      }
-	    } else if (isLiteral()) {
-	      String str = this.value.toString();
-	      if (node != null && showLiteralTypes)
-	        str = node.toString();
-	      return str;
-	    }
-	  }
-	  finally {
-	    KBAPIJena.readLock.unlock();
-	  }
+    if (node != null && node.isResource()) {
+      Resource resource = (Resource) node;
+      Model model = resource.getModel();
+      try {
+        String name = model.shortForm(resource.getURI());
+        if (name.startsWith(":"))
+          name = name.substring(1);
+        return name;
+      } catch (Exception e) {
+        return resource.toString();
+      }
+    } else if (isLiteral()) {
+      String str = this.value.toString();
+      if (node != null && showLiteralTypes)
+        str = node.toString();
+      return str;
+    }
 		return id;
 	}
 
@@ -137,27 +131,21 @@ public class KBObjectJena implements KBObject {
 	}
 
 	public void setInternalNode(Object res) {
-	  KBAPIJena.readLock.lock();
-	  try {
-	    if (res == null)
-	      return;
-	    this.node = (RDFNode) res;
-	    if (node.isLiteral()) {
-	      isLiteral = true;
-	      this.value = node.asNode().getLiteralValue();
-	      this.type = node.asNode().getLiteralDatatypeURI();
-	      
-	      // Special handling for XSDDateTime
-	      if(this.value != null && this.value instanceof XSDDateTime) {
-	        this.value = ((XSDDateTime)this.value).asCalendar().getTime();
-	      }
-	    } else {
-	      this.id = ((Resource) node).getURI();
-	    }
-	  }
-	  finally {
-	    KBAPIJena.readLock.unlock();
-	  }
+    if (res == null)
+      return;
+    this.node = (RDFNode) res;
+    if (node.isLiteral()) {
+      isLiteral = true;
+      this.value = node.asNode().getLiteralValue();
+      this.type = node.asNode().getLiteralDatatypeURI();
+      
+      // Special handling for XSDDateTime
+      if(this.value != null && this.value instanceof XSDDateTime) {
+        this.value = ((XSDDateTime)this.value).asCalendar().getTime();
+      }
+    } else {
+      this.id = ((Resource) node).getURI();
+    }
 	}
 
 	public boolean isLiteral() {
@@ -191,19 +179,13 @@ public class KBObjectJena implements KBObject {
 	}
 
 	public boolean isList() {
-	  KBAPIJena.readLock.lock();
-	  try {
-	    if (node.canAs(RDFList.class)) {
-	      RDFList rdfitems = (RDFList) (node.as(RDFList.class));
-	      if (rdfitems != null && rdfitems.size() > 0) {
-	        return true;
-	      }
-	    }
-	    return false;
-	  }
-	  finally {
-	    KBAPIJena.readLock.unlock();
-	  }
+    if (node.canAs(RDFList.class)) {
+      RDFList rdfitems = (RDFList) (node.as(RDFList.class));
+      if (rdfitems != null && rdfitems.size() > 0) {
+        return true;
+      }
+    }
+    return false;
 	}
 
 	/*

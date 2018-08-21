@@ -38,6 +38,10 @@ public interface KBAPI {
 	public void useBaseModel();
 
 	// Query for Ontology elements
+	public String getURI();
+	
+	public void setURI(String uri);
+	
 	public KBObject getResource(String id);
 
 	public KBObject getConcept(String id);
@@ -223,8 +227,7 @@ public interface KBAPI {
 	
 	public boolean delete();
 	
-	public void end();
-
+	
 	// Serialization (TODO: API should be made RDF agnostic)
 	public String toRdf(boolean showheader);
 
