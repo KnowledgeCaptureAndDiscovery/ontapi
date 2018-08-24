@@ -74,14 +74,6 @@
 		<version>${openllet.version}</version>
 	</dependency>
     
-    <!-- Jena -->
-    <dependency>
-    	<groupId>org.apache.jena</groupId>
-    	<artifactId>jena</artifactId>
-    	<version>${jena.version}</version>
-    	<type>pom</type>
-    </dependency>
-    
     <!-- Jena TDB -->
 	<dependency>
 		<groupId>org.apache.jena</groupId>
