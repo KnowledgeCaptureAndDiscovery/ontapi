@@ -5,7 +5,7 @@ import edu.isi.kcap.ontapi.OntFactory;
 import edu.isi.kcap.ontapi.transactions.TransactionsAPI;
 
 public class TransactionsJena implements TransactionsAPI {
-  protected OntFactory ontologyFactory;
+  protected transient OntFactory ontologyFactory;
   boolean batch;
 
   public TransactionsJena() {

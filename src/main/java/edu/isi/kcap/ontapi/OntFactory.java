@@ -43,7 +43,7 @@ public class OntFactory {
 
 	int type;
 	
-  static Dataset tdbstore;
+  Dataset tdbstore;
 
   boolean usetdb = false;
   
@@ -223,10 +223,10 @@ public class OntFactory {
   }	
   
 	public static void shutdown() {
-	  if(tdbstore.isInTransaction())
+	  /*if(tdbstore.isInTransaction())
 	    tdbstore.abort();
 	  tdbstore.end();
 	  tdbstore.close();
-	  TDBFactory.release(tdbstore);
+	  TDBFactory.release(tdbstore);*/
 	}
 }
