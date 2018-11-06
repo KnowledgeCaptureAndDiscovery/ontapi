@@ -70,6 +70,15 @@ public class OntFactory {
       tdbstore = TDBFactory.createDataset(tripleStoreDirectory);   
 	}
 	
+	public boolean usesTripleStore(KBAPI kb) {
+	  if(this.type == JENA) {
+	    KBAPIJena jkb = (KBAPIJena) kb;
+	    if(jkb.tdbstore != null)
+	      return true;
+	  }
+	  return false;
+	}
+	 
 	public void useTripleStore(KBAPI kb) {
 	  if(this.type == JENA && tdbstore != null) {
 	    KBAPIJena jkb = (KBAPIJena) kb;

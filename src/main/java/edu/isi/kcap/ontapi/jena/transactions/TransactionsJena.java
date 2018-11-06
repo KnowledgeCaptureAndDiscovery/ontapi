@@ -36,7 +36,7 @@ public class TransactionsJena implements TransactionsAPI {
   }
 
   public boolean save(KBAPI kb) {
-    if(!this.batch)
+    if(!this.ontologyFactory.usesTripleStore(kb) || !this.batch)
       return kb.save();
     return true;
   }
