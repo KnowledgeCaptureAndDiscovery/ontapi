@@ -23,12 +23,6 @@ import java.util.Set;
 
 public class SparqlFactory {
 
-	String baseNamespace;
-
-	String domainNamespace;
-
-	String libraryUrl;
-
 	private HashMap<String, String> sparql_escape_map = new HashMap<String, String>();
 
 	public String escape(String string) {
@@ -56,24 +50,32 @@ public class SparqlFactory {
 		return bufOutput.toString();
 	}
 	
-	public SparqlFactory(String baseNamespace, String domainNamespace, String libraryUrl) {
-		this.baseNamespace = baseNamespace;
-		this.domainNamespace = domainNamespace;
-		this.libraryUrl = libraryUrl;
+	public SparqlFactory() {
 	}
 
-	private boolean isVariable(KBObject item) {
-		return !(item.isLiteral() || (item.getNamespace().equals(this.getBaseNamespace()))
-				|| (item.getNamespace().equals(this.getDomainNamespace())) || (item.getNamespace()
-				.equals(this.getLibraryUrl() + "#")));
+	private boolean isVariable(KBObject item, String varNS) {
+	  if(item.isLiteral())
+	    return false;
+	  if(item.getNamespace().equals(varNS))
+	    return true;
+	  return false;
+	  
+	  /*
+		return !(
+		    item.isLiteral() 
+		    || (item.getNamespace().equals(this.getBaseNamespace()))
+				|| (item.getNamespace().equals(this.getDomainNamespace())) 
+				|| (item.getNamespace().equals(this.getLibraryUrl() + "#"))
+				);
+				*/
 	}
 
-	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods) {
+	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods, String varNS) {
 		HashMap<String, ArrayList<KBTriple>> result = new HashMap<String, ArrayList<KBTriple>>();
 		for (KBTriple triple : dods) {
 			KBObject subject = triple.getSubject();
 			String subjectName = subject.getName();
-			if (this.isVariable(subject)) {
+			if (this.isVariable(subject, varNS)) {
 				ArrayList<KBTriple> tmp = result.get(subjectName);
 				if (tmp == null) {
 					tmp = new ArrayList<KBTriple>();
@@ -97,7 +99,7 @@ public class SparqlFactory {
 	 *            a SparqlQuery object
 	 * @return a String representing one line of the where clause
 	 */
-	private String makeWhereClauseLineFromDod(ArrayList<KBObject> dod, SparqlQuery sq) {
+	private String makeWhereClauseLineFromDod(ArrayList<KBObject> dod, SparqlQuery sq, String varNS) {
 		StringBuilder whereClause = new StringBuilder();
 		String tabChar = "\t";
 		String colon = ":";
@@ -112,7 +114,7 @@ public class SparqlFactory {
 		KBObject predicate = dod.get(1);
 		KBObject object = dod.get(2);
 
-		if (this.isVariable(subject)) {
+		if (this.isVariable(subject, varNS)) {
 			String variableName = subject.getName().replaceAll("-", "_").replaceAll("\\.", "_");
 			String sparqlVariableName = "?" + variableName;
 			if (!variables.contains(variableName)) {
@@ -132,7 +134,7 @@ public class SparqlFactory {
 		whereClause.append(colon);
 		whereClause.append(predicate.getName());
 
-		if (this.isVariable(object)) {
+		if (this.isVariable(object, varNS)) {
 			String variableName = object.getName();
 			String sparqlVariableName = "?" + variableName;
 			if (!variables.contains(variableName)) {
@@ -217,7 +219,7 @@ public class SparqlFactory {
 	 *            a list of data object descriptions
 	 * @return a SparqlQuery object
 	 */
-	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods) {
+	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods, String varNS) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		SparqlQuery sq = new SparqlQuery();
@@ -240,7 +242,7 @@ public class SparqlFactory {
 			}
 			// populates the variables and variableMap while building the where
 			// clauses
-			whereClause.append(this.makeWhereClauseLineFromDod(dod, sq));
+			whereClause.append(this.makeWhereClauseLineFromDod(dod, sq, varNS));
 		}
 
 		String prefixLines = this.makePrefixLines(namespacePrefixes);
@@ -256,60 +258,4 @@ public class SparqlFactory {
 		return sq;
 	}
 
-	/**
-	 * Getter for property 'baseNamespace'.
-	 * 
-	 * @return Value for property 'baseNamespace'.
-	 */
-	public String getBaseNamespace() {
-		return baseNamespace;
-	}
-
-	/**
-	 * Setter for property 'baseNamespace'.
-	 * 
-	 * @param baseNamespace
-	 *            Value to set for property 'baseNamespace'.
-	 */
-	public void setBaseNamespace(String baseNamespace) {
-		this.baseNamespace = baseNamespace;
-	}
-
-	/**
-	 * Getter for property 'domainNamespace'.
-	 * 
-	 * @return Value for property 'domainNamespace'.
-	 */
-	public String getDomainNamespace() {
-		return domainNamespace;
-	}
-
-	/**
-	 * Setter for property 'domainNamespace'.
-	 * 
-	 * @param domainNamespace
-	 *            Value to set for property 'domainNamespace'.
-	 */
-	public void setDomainNamespace(String domainNamespace) {
-		this.domainNamespace = domainNamespace;
-	}
-
-	/**
-	 * Getter for property 'libraryUrl'.
-	 * 
-	 * @return Value for property 'libraryUrl'.
-	 */
-	public String getLibraryUrl() {
-		return libraryUrl;
-	}
-
-	/**
-	 * Setter for property 'libraryUrl'.
-	 * 
-	 * @param libraryUrl
-	 *            Value to set for property 'libraryUrl'.
-	 */
-	public void setLibraryUrl(String libraryUrl) {
-		this.libraryUrl = libraryUrl;
-	}
 }
