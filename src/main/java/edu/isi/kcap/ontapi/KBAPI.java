@@ -126,6 +126,8 @@ public interface KBAPI {
 	public ArrayList<KBTriple> getAllTriples();
 
 	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQuery(String queryString);
+	
+	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server);
 
 	public void addTriples(ArrayList<KBTriple> statements);
 

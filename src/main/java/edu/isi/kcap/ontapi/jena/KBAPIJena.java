@@ -24,6 +24,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
 import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.shared.WrappedIOException;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
@@ -574,6 +575,37 @@ public class KBAPIJena implements KBAPI {
       KBObject newPredicate = new KBObjectJena(st.getPredicate());
       KBObject newObject = new KBObjectJena(st.getObject());
       list.add(new KBTripleJena(newSubject, newPredicate, newObject));
+    }
+    return list;
+  }
+
+  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server) {  
+    ArrayList<ArrayList<SparqlQuerySolution>> list = new ArrayList<ArrayList<SparqlQuerySolution>>();
+    Query query = QueryFactory.create(queryString);
+    query.setPrefixMapping(PrefixMapping.Standard);
+
+    ArrayList<String> vars = new ArrayList<String>(query.getResultVars());
+    QueryExecution qexec = QueryExecutionFactory.sparqlService(server, queryString);
+    try {
+      ResultSet results = qexec.execSelect();
+      for (; results.hasNext();) {
+        QuerySolution soln = results.nextSolution();
+        ArrayList<SparqlQuerySolution> inner = new ArrayList<SparqlQuerySolution>();
+        for (String variableName : vars) {
+          RDFNode x = soln.get(variableName);
+          // System.out.println(soln.toString());
+          KBObject item = null;
+          if (x != null)
+            item = new KBObjectJena(x);
+
+          SparqlQuerySolution sqs = new SparqlQuerySolution(variableName, item);
+          inner.add(sqs);
+        }
+        list.add(inner);
+      }
+
+    } finally {
+      qexec.close();
     }
     return list;
   }
