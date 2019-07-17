@@ -31,6 +31,7 @@ import edu.isi.kcap.ontapi.jena.KBAPIJena;
 import edu.isi.kcap.ontapi.jena.KBObjectJena;
 import edu.isi.kcap.ontapi.jena.KBTripleJena;
 import edu.isi.kcap.ontapi.jena.extrules.date.*;
+import edu.isi.kcap.ontapi.jena.extrules.hash.Md5Hash;
 import edu.isi.kcap.ontapi.jena.extrules.math.*;
 import edu.isi.kcap.ontapi.jena.rules.KBRuleJena;
 import edu.isi.kcap.ontapi.jena.rules.KBRuleListJena;
@@ -60,6 +61,7 @@ public class OntFactory {
 			BuiltinRegistry.theRegistry.register(new Log());
 			BuiltinRegistry.theRegistry.register(new AddDays());
 			BuiltinRegistry.theRegistry.register(new SubtractDays());
+			BuiltinRegistry.theRegistry.register(new Md5Hash());
 		}
 	}
 
