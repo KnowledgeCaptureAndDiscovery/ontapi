@@ -1447,10 +1447,13 @@ public class KBAPIJena implements KBAPI {
   //@Override
   public boolean saveAs(String url) {
     if (tdbstore != null) {
-      tdbstore.removeNamedModel(url);
-      tdbstore.addNamedModel(url, ontmodel.getBaseModel());
-      tdbstore.commit();
-      return true;
+      if(tdbstore.isInTransaction()) {
+        tdbstore.removeNamedModel(url);
+        tdbstore.addNamedModel(url, ontmodel.getBaseModel());
+        tdbstore.commit();
+        return true;
+      }
+      return false;
     }
     else {
       this.url = url;
