@@ -98,6 +98,9 @@ public class SparqlAPI {
       tdbstore.commit();
       //TDB.sync(tdbstore);
     }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
     finally {
       tdbstore.end();
     }

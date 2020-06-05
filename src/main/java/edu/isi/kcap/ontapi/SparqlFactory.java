@@ -53,10 +53,10 @@ public class SparqlFactory {
 	public SparqlFactory() {
 	}
 
-	private boolean isVariable(KBObject item, String varNS) {
+	private boolean isVariable(KBObject item, ArrayList<String> varNamespaces) {
 	  if(item.isLiteral())
 	    return false;
-	  if(item.getNamespace().equals(varNS))
+	  if(varNamespaces.contains(item.getNamespace()))
 	    return true;
 	  return false;
 	  
@@ -70,12 +70,12 @@ public class SparqlFactory {
 				*/
 	}
 
-	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods, String varNS) {
+	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods, ArrayList<String> varNamespaces) {
 		HashMap<String, ArrayList<KBTriple>> result = new HashMap<String, ArrayList<KBTriple>>();
 		for (KBTriple triple : dods) {
 			KBObject subject = triple.getSubject();
 			String subjectName = subject.getName();
-			if (this.isVariable(subject, varNS)) {
+			if (this.isVariable(subject, varNamespaces)) {
 				ArrayList<KBTriple> tmp = result.get(subjectName);
 				if (tmp == null) {
 					tmp = new ArrayList<KBTriple>();
@@ -99,7 +99,7 @@ public class SparqlFactory {
 	 *            a SparqlQuery object
 	 * @return a String representing one line of the where clause
 	 */
-	private String makeWhereClauseLineFromDod(ArrayList<KBObject> dod, SparqlQuery sq, String varNS) {
+	private String makeWhereClauseLineFromDod(ArrayList<KBObject> dod, SparqlQuery sq, ArrayList<String> varNamespaces) {
 		StringBuilder whereClause = new StringBuilder();
 		String tabChar = "\t";
 		String colon = ":";
@@ -114,7 +114,7 @@ public class SparqlFactory {
 		KBObject predicate = dod.get(1);
 		KBObject object = dod.get(2);
 
-		if (this.isVariable(subject, varNS)) {
+		if (this.isVariable(subject, varNamespaces)) {
 			String variableName = subject.getName().replaceAll("-", "_").replaceAll("\\.", "_");
 			String sparqlVariableName = "?" + variableName;
 			if (!variables.contains(variableName)) {
@@ -134,7 +134,7 @@ public class SparqlFactory {
 		whereClause.append(colon);
 		whereClause.append(predicate.getName());
 
-		if (this.isVariable(object, varNS)) {
+		if (this.isVariable(object, varNamespaces)) {
 			String variableName = object.getName();
 			String sparqlVariableName = "?" + variableName;
 			if (!variables.contains(variableName)) {
@@ -219,7 +219,7 @@ public class SparqlFactory {
 	 *            a list of data object descriptions
 	 * @return a SparqlQuery object
 	 */
-	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods, String varNS) {
+	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods, ArrayList<String> varNamespaces) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		SparqlQuery sq = new SparqlQuery();
@@ -242,7 +242,7 @@ public class SparqlFactory {
 			}
 			// populates the variables and variableMap while building the where
 			// clauses
-			whereClause.append(this.makeWhereClauseLineFromDod(dod, sq, varNS));
+			whereClause.append(this.makeWhereClauseLineFromDod(dod, sq, varNamespaces));
 		}
 
 		String prefixLines = this.makePrefixLines(namespacePrefixes);
