@@ -32,6 +32,13 @@ import org.apache.jena.util.PrintUtil;
 import org.apache.jena.vocabulary.RDFS;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 
 import edu.isi.kcap.ontapi.*;
@@ -579,6 +586,46 @@ public class KBAPIJena implements KBAPI {
     return list;
   }
 
+  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server, String username, String password) {  
+	System.out.println("User: " + username + " Password: " + password);
+	/* Creating credentials */
+    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+    Credentials credentials = new UsernamePasswordCredentials(username, password);
+    credsProvider.setCredentials(AuthScope.ANY, credentials);
+    HttpClient httpclient = HttpClients.custom()
+  	  .setDefaultCredentialsProvider(credsProvider)
+  	  .build();
+	  
+    ArrayList<ArrayList<SparqlQuerySolution>> list = new ArrayList<ArrayList<SparqlQuerySolution>>();
+    Query query = QueryFactory.create(queryString);
+    query.setPrefixMapping(PrefixMapping.Standard);
+
+    ArrayList<String> vars = new ArrayList<String>(query.getResultVars());
+    QueryExecution qexec = QueryExecutionFactory.sparqlService(server, queryString, httpclient);
+    try {
+      ResultSet results = qexec.execSelect();
+      for (; results.hasNext();) {
+        QuerySolution soln = results.nextSolution();
+        ArrayList<SparqlQuerySolution> inner = new ArrayList<SparqlQuerySolution>();
+        for (String variableName : vars) {
+          RDFNode x = soln.get(variableName);
+          //System.out.println(soln.toString());
+          KBObject item = null;
+          if (x != null)
+            item = new KBObjectJena(x);
+
+          SparqlQuerySolution sqs = new SparqlQuerySolution(variableName, item);
+          inner.add(sqs);
+        }
+        list.add(inner);
+      }
+
+    } finally {
+      qexec.close();
+    }
+    return list;
+  }
+  
   public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server) {  
     ArrayList<ArrayList<SparqlQuerySolution>> list = new ArrayList<ArrayList<SparqlQuerySolution>>();
     Query query = QueryFactory.create(queryString);
