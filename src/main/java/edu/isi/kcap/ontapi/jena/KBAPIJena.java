@@ -586,9 +586,8 @@ public class KBAPIJena implements KBAPI {
     return list;
   }
 
-  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server, String username, String password) {  
-	System.out.println("User: " + username + " Password: " + password);
-	/* Creating credentials */
+  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server, String username, String password) {
+    /* Creating credentials */
     CredentialsProvider credsProvider = new BasicCredentialsProvider();
     Credentials credentials = new UsernamePasswordCredentials(username, password);
     credsProvider.setCredentials(AuthScope.ANY, credentials);
