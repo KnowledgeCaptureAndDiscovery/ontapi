@@ -12,6 +12,8 @@ public interface TransactionsAPI {
   public boolean saveAll();
   
   public boolean end();
+
+  public boolean is_in_transaction();
   
   public boolean start_batch_operation();
   
