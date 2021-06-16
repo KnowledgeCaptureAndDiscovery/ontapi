@@ -46,6 +46,10 @@ public class TransactionsJena implements TransactionsAPI {
       return this.ontologyFactory.end_transaction();
     return true;
   }
+  
+  public boolean is_in_transaction() {
+	  return (this.ontologyFactory.on_transaction());
+  }
 
   /* 
    * The following are used to batch multiple function calls together

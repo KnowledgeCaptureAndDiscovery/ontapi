@@ -233,6 +233,10 @@ public class OntFactory {
      return true;
   }	
   
+  public boolean on_transaction() {
+	  return (this.usetdb && tdbstore.isInTransaction());
+  }
+  
 	public static void shutdown() {
 	  /*if(tdbstore.isInTransaction())
 	    tdbstore.abort();
