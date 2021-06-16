@@ -24,7 +24,7 @@
     <openllet.version>2.6.4</openllet.version>
     <aterm-java.version>1.6</aterm-java.version>
     <slf4j-log4j.version>1.7.25</slf4j-log4j.version>
-    <junit.version>4.5</junit.version>
+    <junit.version>4.13.1</junit.version>
 	<commons-io.version>2.4</commons-io.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
