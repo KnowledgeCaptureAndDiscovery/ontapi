@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -14,10 +12,10 @@
   <version>1.2.2</version>
 
   <organization>
-  	<name>USC/Information Sciences Institute</name>
-  	<url>http://www.isi.edu/ikcap</url>
+    <name>USC/Information Sciences Institute</name>
+    <url>http://www.isi.edu/ikcap</url>
   </organization>
-  
+
   <properties>
     <!-- pellet-jena.version>2.4.0-SNAPSHOT</pellet-jena.version-->
     <jena.version>3.7.0</jena.version>
@@ -25,7 +23,7 @@
     <aterm-java.version>1.6</aterm-java.version>
     <slf4j-log4j.version>1.7.25</slf4j-log4j.version>
     <junit.version>4.5</junit.version>
-	<commons-io.version>2.4</commons-io.version>
+    <commons-io.version>2.4</commons-io.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>1.7</maven.compiler.target>
@@ -63,30 +61,48 @@
     </dependency>
 
     <!-- Pellet (Open Pellet) -->
-	<dependency>
-		<groupId>com.github.galigator.openllet</groupId>
-		<artifactId>openllet-owlapi</artifactId>
-		<version>${openllet.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>com.github.galigator.openllet</groupId>
-		<artifactId>openllet-jena</artifactId>
-		<version>${openllet.version}</version>
-	</dependency>
-    
+    <dependency>
+      <groupId>com.github.galigator.openllet</groupId>
+      <artifactId>openllet-owlapi</artifactId>
+      <version>${openllet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.galigator.openllet</groupId>
+      <artifactId>openllet-jena</artifactId>
+      <version>${openllet.version}</version>
+    </dependency>
+
     <!-- Jena TDB -->
-	<dependency>
-		<groupId>org.apache.jena</groupId>
-		<artifactId>jena-tdb</artifactId>
-		<version>${jena.version}</version>
-	</dependency>
-	
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-tdb</artifactId>
+      <version>${jena.version}</version>
+    </dependency>
+
     <!-- Apache Commons IO -->
     <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.8.2</version>
     </dependency>
 
   </dependencies>
+  <build>
+    <finalName>maven-unit-test</finalName>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M5</version>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>
