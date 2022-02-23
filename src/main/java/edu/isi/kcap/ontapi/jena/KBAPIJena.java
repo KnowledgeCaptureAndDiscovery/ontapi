@@ -30,7 +30,7 @@ import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
 import org.apache.jena.util.PrintUtil;
 import org.apache.jena.vocabulary.RDFS;
-
+import org.apache.logging.log4j.LogManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -39,7 +39,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.log4j.Logger;
 
 import edu.isi.kcap.ontapi.*;
 import edu.isi.kcap.ontapi.rules.KBRule;
@@ -56,6 +55,8 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import org.apache.logging.log4j.Logger;
+ 
 
 public class KBAPIJena implements KBAPI {
   // The ontology ontmodel
@@ -1555,7 +1556,8 @@ public class KBAPIJena implements KBAPI {
         StackTraceElement caller = stack[3];
         String warnstr = method.getMethodName() + ": " + Arrays.toString(vars);
         warnstr += ", called from " + caller.getFileName() + ":" + caller.getLineNumber();
-        Logger.getLogger(this.getClass()).warn(warnstr);
+        Logger logger = LogManager.getRootLogger();
+        logger.warn(warnstr);
         return false;
       }
     }
