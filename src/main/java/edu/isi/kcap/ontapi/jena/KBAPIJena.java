@@ -699,8 +699,10 @@ public class KBAPIJena implements KBAPI {
   public ArrayList<KBObject> getSuperClasses(KBObject cls, boolean direct_only) {	
     ArrayList<KBObject> list = new ArrayList<KBObject>();
     OntClass cl = (OntClass) cls.getInternalNode();
-    for (Iterator<OntClass> it = cl.listSuperClasses(direct_only); it.hasNext();) {
-      list.add(new KBObjectJena((Resource) it.next()));
+    if(cl != null) {
+      for (Iterator<OntClass> it = cl.listSuperClasses(direct_only); it.hasNext();) {
+        list.add(new KBObjectJena((Resource) it.next()));
+      }
     }
     return list;
   }
