@@ -9,7 +9,7 @@
 
   <groupId>edu.isi.kcap</groupId>
   <artifactId>ontapi</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.4</version>
 
   <organization>
     <name>USC/Information Sciences Institute</name>
