@@ -681,7 +681,10 @@ public class KBAPIJena implements KBAPI {
         }
         list.add(inner);
       }
-
+    }
+    catch(QueryCancelledException e){
+      System.out.println("Query cancelled");
+      throw e;
     } finally {
       qexec.close();
     }
