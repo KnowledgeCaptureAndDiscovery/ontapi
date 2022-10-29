@@ -17,6 +17,7 @@
 
 package edu.isi.kcap.ontapi.jena;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,7 +31,9 @@ import org.apache.jena.vocabulary.RDF;
 
 import edu.isi.kcap.ontapi.KBObject;
 
-public class KBObjectJena implements KBObject {
+public class KBObjectJena implements KBObject, Serializable {
+  private static final long serialVersionUID = 1L;
+
 	String id;
 
 	Object value;

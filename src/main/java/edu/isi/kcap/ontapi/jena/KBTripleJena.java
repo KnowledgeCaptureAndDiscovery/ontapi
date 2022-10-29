@@ -17,12 +17,14 @@
 
 package edu.isi.kcap.ontapi.jena;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import edu.isi.kcap.ontapi.KBObject;
 import edu.isi.kcap.ontapi.KBTriple;
 
-public class KBTripleJena implements KBTriple {
+public class KBTripleJena implements KBTriple, Serializable {
+  private static final long serialVersionUID = 1L;
 
 	public KBObject subject;
 	public KBObject predicate;
