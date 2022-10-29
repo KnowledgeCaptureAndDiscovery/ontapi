@@ -20,6 +20,7 @@ package edu.isi.kcap.ontapi.jena;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.ontology.*;
 import org.apache.jena.query.*;
+import org.apache.jena.system.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
@@ -129,7 +130,7 @@ public class KBAPIJena implements KBAPI {
     initialize(spec, tdbstore);
   }
 
-  private void initialize(OntSpec spec, Dataset tdbstore) throws Exception {
+  private void initialize(OntSpec spec, final Dataset tdbstore) throws Exception {
     modelSpec = getOntSpec(spec);
     if (modelSpec == null)
       return;
@@ -147,23 +148,17 @@ public class KBAPIJena implements KBAPI {
     {
       // If there is a triple tdbstore
       this.tdbstore = tdbstore;
-      boolean inTransactionAlready = tdbstore.isInTransaction();
-      if(!inTransactionAlready)
-        tdbstore.begin(TxnType.READ);
-      boolean exists = tdbstore.containsNamedModel(this.url);
-      Model tmodel = tdbstore.getNamedModel(this.url);
-      if(!inTransactionAlready)
-        tdbstore.end();
-      
-      if (this.cache_url && !exists) {
-        tdbstore.begin(TxnType.WRITE);
-        tmodel.read(this.url);
-        tdbstore.commit(); 
-        tdbstore.end();
-      }
-      if (tmodel != null) {
-        ontmodel = ModelFactory.createOntologyModel(modelSpec, tmodel);
-      }
+      Txn.executeWrite(tdbstore, ()->{
+        boolean exists = tdbstore.containsNamedModel(this.url);
+        Model tmodel = tdbstore.getNamedModel(this.url);
+  
+        if (this.cache_url && !exists) {
+          tmodel.read(this.url);
+        }
+        if (tmodel != null) {
+          ontmodel = ModelFactory.createOntologyModel(modelSpec, tmodel);
+        }
+      });
     }
   }
 

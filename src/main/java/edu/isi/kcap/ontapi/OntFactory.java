@@ -21,6 +21,7 @@ import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.TxnType;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
+import org.apache.jena.system.Txn;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
@@ -213,6 +214,16 @@ public class OntFactory {
     if(this.usetdb && !tdbstore.isInTransaction()) {
       tdbstore.begin(TxnType.WRITE);
     }
+    return true;
+  }
+  
+  public boolean read_transaction(Runnable r) {
+    Txn.executeRead(tdbstore, r); 
+    return true;
+  }
+  
+  public boolean write_transaction(Runnable r) {
+    Txn.executeWrite(tdbstore, r);
     return true;
   }
   

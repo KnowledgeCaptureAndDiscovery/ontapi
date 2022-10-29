@@ -29,6 +29,16 @@ public class TransactionsJena implements TransactionsAPI {
     return true;
   }
   
+  public boolean read(Runnable r) {
+    this.ontologyFactory.read_transaction(r);
+    return true;
+  }
+  
+  public boolean write(Runnable r) {
+    this.ontologyFactory.write_transaction(r);
+    return true;
+  }
+  
   public boolean saveAll() {
     if(!this.batch)
       return this.ontologyFactory.commit_transaction();

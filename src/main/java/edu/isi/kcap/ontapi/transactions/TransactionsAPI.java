@@ -7,6 +7,10 @@ public interface TransactionsAPI {
   
   public boolean start_write();
   
+  public boolean read(Runnable r);
+  
+  public boolean write(Runnable r);  
+  
   public boolean save(KBAPI kb);
   
   public boolean saveAll();
