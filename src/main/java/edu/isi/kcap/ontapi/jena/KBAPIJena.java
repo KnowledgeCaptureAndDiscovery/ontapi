@@ -1381,6 +1381,18 @@ public class KBAPIJena implements KBAPI {
  
     ind.setPropertyValue(RDFS.comment, ontmodel.createTypedLiteral(comment));
   }
+  
+  public void addComment(KBObject obj, String comment) {
+    if (!checkNulls(obj, comment))
+      return;
+    Individual ind = getIndividual((Resource) obj.getInternalNode());
+    if (ind == null) {
+      return;
+    }
+ 
+    ind.addProperty(RDFS.comment, ontmodel.createTypedLiteral(comment));
+  }
+  
 
   public ArrayList<String> getAllComments(KBObject obj) {
     if (!checkNulls(obj))

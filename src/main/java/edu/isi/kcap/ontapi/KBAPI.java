@@ -113,6 +113,8 @@ public interface KBAPI {
 	public String getComment(KBObject obj);
 
 	public void setComment(KBObject obj, String comment);
+	
+	public void addComment(KBObject obj, String comment);
 
 	public ArrayList<String> getAllComments(KBObject obj);
 
