@@ -20,23 +20,10 @@ jobs:
           java-version: "11"
           distribution: "temurin"
 
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v5
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
         with:
           gpg_private_key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
-          passphrase: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
-
-      - name: Install graphviz package on ubuntu-latest
-        run: sudo apt-get install graphviz
-      - id: publish-to-central
-        name: Publish to Central Repository
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        run: |
-          mvn \
-            --no-transfer-progress \
-            --batch-mode \
-            -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} \
-            clean deploy
+          gpg_passphrase: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+          nexus_username: ${{ secrets.OSSRH_USERNAME }}
+          nexus_password: ${{ secrets.OSSRH_TOKEN }}
