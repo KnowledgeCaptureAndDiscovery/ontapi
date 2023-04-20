@@ -26,10 +26,10 @@ import edu.isi.kcap.ontapi.rules.KBRuleList;
 
 /**
  * @author varunr
- *         <p/>
+ *         <p>
  *         KBAPI Interface : Needs to be implemented (see KBAPIJena for an
  *         example) Uses KBObject interface (see KBObjectJena for an example)
- *         <p/>
+ *         </p>
  *         Also, check OntFactory/OntSpec to see the list of constants used
  */
 public interface KBAPI {
@@ -39,9 +39,9 @@ public interface KBAPI {
 
 	// Query for Ontology elements
 	public String getURI();
-	
+
 	public void setURI(String uri);
-	
+
 	public KBObject getResource(String id);
 
 	public KBObject getConcept(String id);
@@ -51,7 +51,7 @@ public interface KBAPI {
 	public KBObject getProperty(String id);
 
 	public KBObject getAnnotationProperty(String id);
-	 
+
 	public ArrayList<KBObject> getAllClasses();
 
 	public ArrayList<KBObject> getAllDatatypeProperties();
@@ -72,7 +72,7 @@ public interface KBAPI {
 	public ArrayList<KBObject> getPropertiesOfClass(KBObject cls, boolean direct);
 
 	public void addClassForInstance(KBObject obj, KBObject cls);
-	
+
 	public void setClassForInstance(KBObject obj, KBObject cls);
 
 	// Property Queries/Setting
@@ -99,21 +99,21 @@ public interface KBAPI {
 	public boolean isFunctionalProperty(KBObject prop);
 
 	public ArrayList<KBObject> getPropertyDomains(KBObject prop);
-	
+
 	public ArrayList<KBObject> getPropertyDomainsDisjunctive(KBObject prop);
 
 	public ArrayList<KBObject> getPropertyRanges(KBObject prop);
 
 	// Shortcut to get Label properties
 	public String getLabel(KBObject obj);
-	
+
 	public void setLabel(KBObject obj, String label);
-	
+
 	// Shortcut to get Comment properties
 	public String getComment(KBObject obj);
 
 	public void setComment(KBObject obj, String comment);
-	
+
 	public void addComment(KBObject obj, String comment);
 
 	public ArrayList<String> getAllComments(KBObject obj);
@@ -128,11 +128,12 @@ public interface KBAPI {
 	public ArrayList<KBTriple> getAllTriples();
 
 	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQuery(String queryString);
-	
+
 	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server);
 
-	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server, String username, String password);
-	
+	public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQueryRemote(String queryString, String server, String username,
+			String password);
+
 	public void addTriples(ArrayList<KBTriple> statements);
 
 	public KBTriple addTriple(KBTriple triple);
@@ -142,7 +143,7 @@ public interface KBAPI {
 	public void removeTriple(KBTriple triple);
 
 	public void removeTriple(KBObject subj, KBObject pred, KBObject obj);
-	
+
 	public void removeAllTriples();
 
 	// isA, subClasses, subProperties
@@ -159,18 +160,18 @@ public interface KBAPI {
 	public ArrayList<KBObject> getSuperClasses(KBObject cls, boolean direct_only);
 
 	public ArrayList<KBObject> getSubPropertiesOf(KBObject prop, boolean direct);
-	
+
 	public ArrayList<KBObject> getSuperPropertiesOf(KBObject prop, boolean direct);
 
 	// Creation/Deletion
 	public KBObject createClass(String id);
 
 	public KBObject createClass(String id, String parentid);
-	
+
 	public boolean setSuperClass(String id, String parentid);
 
 	public KBObject createIndividual(String id);
-	
+
 	public KBObject createObjectOfClass(String id, KBObject cls);
 
 	public KBObject createObjectProperty(String propid);
@@ -182,13 +183,13 @@ public interface KBAPI {
 	public KBObject createDatatypeProperty(String propid, String parentpropid);
 
 	public boolean setPropertyDomain(String propid, String domainid);
-	
+
 	public boolean addPropertyDomain(String propid, String domainid);
-	
+
 	public boolean addPropertyDomainDisjunctive(String propid, String domainid);
-	
+
 	public boolean removePropertyDomain(String propid, String domainid);
-	
+
 	public boolean removePropertyDomainDisjunctive(String propid, String domainid);
 
 	public boolean setPropertyRange(String propid, String rangeid);
@@ -208,9 +209,9 @@ public interface KBAPI {
 
 	// Rules
 	public void setRulePrefixes(HashMap<String, String> map);
-	
+
 	public void applyRules(KBRuleList rules);
-	
+
 	public void applyRule(KBRule rule);
 
 	// Imports
@@ -230,10 +231,9 @@ public interface KBAPI {
 	public boolean save();
 
 	public boolean saveAs(String url);
-	
+
 	public boolean delete();
-	
-	
+
 	// Serialization (TODO: API should be made RDF agnostic)
 	public String toRdf(boolean showheader);
 
@@ -250,8 +250,8 @@ public interface KBAPI {
 	public String toN3();
 
 	public String toN3(String base);
-	
+
 	public String toJson();
-	
+
 	public String toJson(String base);
 }

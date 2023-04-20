@@ -26,7 +26,7 @@ public class SparqlFactory {
 	private HashMap<String, String> sparql_escape_map = new HashMap<String, String>();
 
 	public String escape(String string) {
-		if(sparql_escape_map.size() == 0) {
+		if (sparql_escape_map.size() == 0) {
 			sparql_escape_map.put("\t", "\\t");
 			sparql_escape_map.put("\n", "\\n");
 			sparql_escape_map.put("\r", "\\r");
@@ -36,7 +36,7 @@ public class SparqlFactory {
 			sparql_escape_map.put("'", "\\'");
 			sparql_escape_map.put("\\", "\\\\");
 		}
-		
+
 		StringBuffer bufOutput = new StringBuffer(string);
 		for (int i = 0; i < bufOutput.length(); i++) {
 			String replacement = sparql_escape_map.get("" + bufOutput.charAt(i));
@@ -49,28 +49,29 @@ public class SparqlFactory {
 		}
 		return bufOutput.toString();
 	}
-	
+
 	public SparqlFactory() {
 	}
 
 	private boolean isVariable(KBObject item, ArrayList<String> varNamespaces) {
-	  if(item.isLiteral())
-	    return false;
-	  if(varNamespaces.contains(item.getNamespace()))
-	    return true;
-	  return false;
-	  
-	  /*
-		return !(
-		    item.isLiteral() 
-		    || (item.getNamespace().equals(this.getBaseNamespace()))
-				|| (item.getNamespace().equals(this.getDomainNamespace())) 
-				|| (item.getNamespace().equals(this.getLibraryUrl() + "#"))
-				);
-				*/
+		if (item.isLiteral())
+			return false;
+		if (varNamespaces.contains(item.getNamespace()))
+			return true;
+		return false;
+
+		/*
+		 * return !(
+		 * item.isLiteral()
+		 * || (item.getNamespace().equals(this.getBaseNamespace()))
+		 * || (item.getNamespace().equals(this.getDomainNamespace()))
+		 * || (item.getNamespace().equals(this.getLibraryUrl() + "#"))
+		 * );
+		 */
 	}
 
-	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods, ArrayList<String> varNamespaces) {
+	public HashMap<String, ArrayList<KBTriple>> dodsForDataVariables(ArrayList<KBTriple> dods,
+			ArrayList<String> varNamespaces) {
 		HashMap<String, ArrayList<KBTriple>> result = new HashMap<String, ArrayList<KBTriple>>();
 		for (KBTriple triple : dods) {
 			KBObject subject = triple.getSubject();
@@ -92,7 +93,7 @@ public class SparqlFactory {
 	 * nameSpacePrefixes, the variableMap, and variables collections
 	 * ?dataVariable0 ns1:hasDomain ns1:weather . ?dataVariable0 ns2:type
 	 * ns1:DiscreteInstance . ?dataVariable0 ns2:type ns1:Instance .
-	 * 
+	 *
 	 * @param dod
 	 *            a data object description
 	 * @param sq
@@ -145,7 +146,7 @@ public class SparqlFactory {
 			whereClause.append(sparqlVariableName);
 		} else {
 			whereClause.append(space);
-			if (object.isLiteral() && object.getValue() !=  null) {
+			if (object.isLiteral() && object.getValue() != null) {
 				if (object.getDataType() != null) {
 					whereClause.append("\"");
 					whereClause.append(escape(object.getValueAsString()));
@@ -169,13 +170,16 @@ public class SparqlFactory {
 
 	/**
 	 * make the prefix section of the query PREFIX ns2:
-	 * <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX ns0:
-	 * <http://wings-workflows.org/ontology/DMDomain/Template1.owl#> PREFIX ns1:
-	 * <http://wings-workflows.org/ontology/dc/dm/ontology.owl#>
-	 * 
+	 * {@literal <}http://www.w3.org/1999/02/22-rdf-syntax-ns#{@literal \}{@literal >}
+	 * PREFIX ns0:
+	 * {@literal <}http://wings-workflows.org/ontology/DMDomain/Template1.owl#{@literal \}{@literal >}
+	 * PREFIX ns1:
+	 * {@literal <}http://wings-workflows.org/ontology/dc/dm/ontology.owl#{@literal \}{@literal >}
+	 *
 	 * @param namespacePrefixes
-	 *            a map from url to (constructed) namespace (e.g. ns0, ns1, ...,
-	 *            ns0)
+	 *                          a map from url to (constructed) namespace (e.g. ns0,
+	 *                          ns1, ...,
+	 *                          ns0)
 	 * @return a String representing the prefix section of the query
 	 */
 	public String makePrefixLines(HashMap<String, String> namespacePrefixes) {
@@ -193,9 +197,9 @@ public class SparqlFactory {
 
 	/**
 	 * makes the selection line of the query SELECT ?dataVariable0 WHERE {
-	 * 
+	 *
 	 * @param variables
-	 *            the dataVariables of the query
+	 *                  the dataVariables of the query
 	 * @return a String representation of the select line
 	 */
 	private String makeSelectLine(ArrayList<String> variables) {
@@ -214,12 +218,13 @@ public class SparqlFactory {
 	/**
 	 * constructs a SparqlQuery object from a list of dods a SparqlQuery
 	 * contains the query, a variable list, a variable map, and a prefix map
-	 * 
+	 *
 	 * @param dods
-	 *            a list of data object descriptions
+	 *             a list of data object descriptions
 	 * @return a SparqlQuery object
 	 */
-	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods, ArrayList<String> varNamespaces) {
+	public SparqlQuery makeSparqlQueryFromDataObjectDescriptions(ArrayList<KBTriple> dods,
+			ArrayList<String> varNamespaces) {
 		StringBuilder queryBuilder = new StringBuilder();
 
 		SparqlQuery sq = new SparqlQuery();
