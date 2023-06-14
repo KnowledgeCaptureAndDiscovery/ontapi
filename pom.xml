@@ -80,6 +80,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/net.sourceforge.owlapi/owlapi-distribution -->
+    <dependency>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>owlapi-distribution</artifactId>
+      <version>5.1.5</version>
+    </dependency>
+
+
     <!-- log4j -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
