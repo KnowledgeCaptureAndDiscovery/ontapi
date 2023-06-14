@@ -56,7 +56,7 @@
     <openllet.version>2.6.4</openllet.version>
     <aterm-java.version>1.6</aterm-java.version>
     <junit.version>4.5</junit.version>
-    <commons-io.version>2.4</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
