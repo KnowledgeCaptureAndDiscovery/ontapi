@@ -52,7 +52,7 @@
 
   <properties>
     <!-- pellet-jena.version>2.4.0-SNAPSHOT</pellet-jena.version-->
-    <jena.version>3.7.0</jena.version>
+    <jena.version>4.2.0</jena.version>
     <openllet.version>2.6.4</openllet.version>
     <aterm-java.version>1.6</aterm-java.version>
 
