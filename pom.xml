@@ -55,8 +55,9 @@
     <jena.version>3.7.0</jena.version>
     <openllet.version>2.6.4</openllet.version>
     <aterm-java.version>1.6</aterm-java.version>
+
+    <jackson.version>2.8.6</jackson.version>
     <junit.version>4.5</junit.version>
-    <owlapi.version>5.1.20</owlapi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -72,6 +73,11 @@
 
   <!-- Dependencies -->
   <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
     <!-- junit -->
     <dependency>
       <groupId>junit</groupId>
@@ -84,7 +90,7 @@
     <dependency>
       <groupId>net.sourceforge.owlapi</groupId>
       <artifactId>owlapi-distribution</artifactId>
-      <version>5.1.5</version>
+      <version>5.5.0</version>
     </dependency>
 
 
@@ -192,37 +198,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M5</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <id>enforce</id>
-            <configuration>
-              <rules>
-                <dependencyConvergence>
-                  <excludes>
-                    <exclude>org.slf4j:slf4j-api:jar</exclude>
-                    <exclude>commons-io:commons-io</exclude>
-                    <exclude>org.apache.httpcomponents:httpclient</exclude>
-                    <exclude>org.apache.httpcomponents:httpclient-cache</exclude>
-                    <exclude>commons-codec:commons-codec:jar</exclude>
-                    <exclude>org.apache.commons:commons-lang3</exclude>
-                    <exclude>org.antlr:antlr-runtime</exclude>
-                    <exclude>com.github.jsonld-java:jsonld-java</exclude>
-                    <exclude>org.slf4j:jcl-over-slf4j</exclude>
-                    <exclude>com.google.guava:guava</exclude>
-                  </excludes>
-                </dependencyConvergence>
-              </rules>
-            </configuration>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
 
