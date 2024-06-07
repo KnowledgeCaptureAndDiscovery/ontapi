@@ -29,7 +29,7 @@ import openllet.jena.PelletReasonerFactory;
 import org.junit.jupiter.api.Test;
 
 public class KBTests {
-	static String onturl = "http://www.wings-workflows.org/ontology/workflow.owl";
+	static String onturl = "https://wings-workflows.org/ontology/workflow.owl";
 	static String url = "http://localhost:8080/wings/export/users/1/DMDomain/workflows/ModelAndClassify.owl";
 	@Test	
 	void write() {
@@ -56,7 +56,7 @@ public class KBTests {
 			e.printStackTrace();
 		}
 		finally {
-			tdbstore.end();
+			//tdbstore.end();
 		}
 	}
 
