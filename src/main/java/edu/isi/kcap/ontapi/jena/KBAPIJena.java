@@ -137,6 +137,11 @@ public class KBAPIJena implements KBAPI {
 
     submodels = new ArrayList<KBAPIJena>();
     
+    if(this.url != null) {
+      // Fix Ontology URL changes
+      this.url = getFixedOntologyUrl(this.url);
+    }
+    
     OntDocumentManager.getInstance().setProcessImports(false);
     if (tdbstore == null || this.url == null) 
     {
@@ -145,7 +150,7 @@ public class KBAPIJena implements KBAPI {
       readModel();
     } 
     else 
-    {
+    { 
       // If there is a triple tdbstore
       this.tdbstore = tdbstore;
       Txn.executeWrite(tdbstore, ()->{
@@ -161,10 +166,22 @@ public class KBAPIJena implements KBAPI {
       });
     }
   }
+  
+  private String getFixedOntologyUrl(String url) {
+    String onturl = "http://www.wings-workflows.org/ontology";
+    String newonturl = "https://wings-workflows.org/ontology";
+    if (url.startsWith(onturl)) {
+      return newonturl + url.substring(onturl.length());
+    }
+    return url;
+  }
 
   private void readModel() throws Exception {
     if (ontmodel != null) {
       if (this.url != null) {
+        if (this.url.startsWith("urn:")) {
+          return;
+        }
         try {
           ontmodel.read(this.url);
         }
