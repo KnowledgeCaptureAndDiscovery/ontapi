@@ -669,11 +669,13 @@ public class KBAPIJena implements KBAPI {
     return list;
   }
 
-  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQuery(String queryString) {	
+  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQuery(String queryString) {
+    Integer timeOut = 1000 * 60 * 5; //default timeout is 5 minutes
     ArrayList<ArrayList<SparqlQuerySolution>> list = new ArrayList<ArrayList<SparqlQuerySolution>>();
     Query query = QueryFactory.create(queryString);
     ArrayList<String> vars = new ArrayList<String>(query.getResultVars());
     QueryExecution qexec = QueryExecutionFactory.create(query, ontmodel);
+    qexec.setTimeout(timeOut);
     try {
       ResultSet results = qexec.execSelect();
       for (; results.hasNext();) {
@@ -691,13 +693,48 @@ public class KBAPIJena implements KBAPI {
         }
         list.add(inner);
       }
-
+    }
+    catch(QueryCancelledException e){
+      System.out.println("Query cancelled");
+      throw e;
     } finally {
       qexec.close();
     }
     return list;
   }
 
+  public ArrayList<ArrayList<SparqlQuerySolution>> sparqlQuery(String queryString, int timeOut) {	
+    ArrayList<ArrayList<SparqlQuerySolution>> list = new ArrayList<ArrayList<SparqlQuerySolution>>();
+    Query query = QueryFactory.create(queryString);
+    ArrayList<String> vars = new ArrayList<String>(query.getResultVars());
+    QueryExecution qexec = QueryExecutionFactory.create(query, ontmodel);
+    qexec.setTimeout(timeOut);
+    try {
+      ResultSet results = qexec.execSelect();
+      for (; results.hasNext();) {
+        QuerySolution soln = results.nextSolution();
+        ArrayList<SparqlQuerySolution> inner = new ArrayList<SparqlQuerySolution>();
+        for (String variableName : vars) {
+          RDFNode x = soln.get(variableName);
+          // System.out.println(soln.toString());
+          KBObject item = null;
+          if (x != null)
+            item = new KBObjectJena(x);
+
+          SparqlQuerySolution sqs = new SparqlQuerySolution(variableName, item);
+          inner.add(sqs);
+        }
+        list.add(inner);
+      }
+    }
+    catch(QueryCancelledException e){
+      System.out.println("Query cancelled");
+      throw e;
+    } finally {
+      qexec.close();
+    }
+    return list;
+  }
   public ArrayList<KBObject> getSubClasses(KBObject cls, boolean direct_only) {
     ArrayList<KBObject> list = new ArrayList<KBObject>();
     OntClass cl = (OntClass) cls.getInternalNode();
