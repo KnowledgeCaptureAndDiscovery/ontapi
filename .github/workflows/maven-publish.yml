@@ -2,7 +2,7 @@ name: Maven Package
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   build:
