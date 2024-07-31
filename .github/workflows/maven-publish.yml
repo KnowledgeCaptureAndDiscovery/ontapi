@@ -3,7 +3,7 @@ name: Maven Package
 on:
   push:
     branches:
-      - '*'
+      - main
 
 jobs:
   build:
@@ -26,15 +26,14 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --import
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --yes --import
           gpg --list-secret-keys
 
       - name: Verify GPG Passphrase
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "test message" | gpg --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --sign --local-user your-key-id
-          gpg --list-secret-keys
+          echo "test message" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --sign --local-user your-email@example.com
 
       - name: Set up Maven settings
         run: |
