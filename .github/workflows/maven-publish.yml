@@ -33,7 +33,7 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "test message" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --sign --local-user your-email@example.com
+          echo "test message" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" --sign --local-user maxiosorio@gmail.com
 
       - name: Set up Maven settings
         run: |
