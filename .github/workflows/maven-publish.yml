@@ -41,7 +41,7 @@ jobs:
           echo "<settings>
                   <servers>
                     <server>
-                      <id>ossrh</id>
+                      <id>central</id>
                       <username>${{ secrets.OSSRH_USERNAME }}</username>
                       <password>${{ secrets.OSSRH_PASSWORD }}</password>
                     </server>
@@ -60,9 +60,6 @@ jobs:
                     <activeProfile>gpg-sign</activeProfile>
                   </activeProfiles>
                 </settings>" > ~/.m2/settings.xml
-
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
 
       - name: Publish to OSSRH
         run: mvn deploy
