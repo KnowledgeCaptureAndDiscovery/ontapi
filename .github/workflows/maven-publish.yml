@@ -51,7 +51,7 @@ jobs:
                       <id>gpg-sign</id>
                       <properties>
                         <gpg.executable>gpg</gpg.executable>
-                        <gpg.keyname>your-email@example.com</gpg.keyname>
+                        <gpg.keyname>maxiosorio@gmail.com</gpg.keyname>
                         <gpg.passphrase>${{ secrets.GPG_PASSPHRASE }}</gpg.passphrase>
                       </properties>
                     </profile>
